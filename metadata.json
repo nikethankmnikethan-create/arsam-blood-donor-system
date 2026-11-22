@@ -1,0 +1,6 @@
+{
+  "name": "ARSAM",
+  "description": "Community blood donor registry and emergency request coordination app with verified hospitals, safe contact, and non-medical AI guidance.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

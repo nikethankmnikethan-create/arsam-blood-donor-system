@@ -1,0 +1,225 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Authenticated user account and ARSAM role profile.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string", "description": "Firebase Auth UID" },
+        "displayName": { "type": "string", "description": "Display name" },
+        "role": { "type": "string", "enum": ["DONOR", "REQUESTER", "HOSPITAL", "BLOOD_BANK", "ADMIN"] },
+        "district": { "type": "string" },
+        "city": { "type": "string" },
+        "preferredLanguage": { "type": "string", "enum": ["en", "kn", "ml"] },
+        "trustLevel": { "type": "string", "enum": ["UNVERIFIED", "IDENTITY_VERIFIED", "HOSPITAL_CONFIRMED", "HOSPITAL_AUTHORIZED"] },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time", "description": "Client writes FieldValue.serverTimestamp()" },
+        "updatedAt": { "type": "string", "format": "date-time", "description": "Client writes FieldValue.serverTimestamp()" }
+      },
+      "required": ["userId", "displayName", "role", "district", "city", "preferredLanguage", "trustLevel", "active", "createdAt", "updatedAt"]
+    },
+    "DonorProfile": {
+      "title": "DonorProfile",
+      "description": "Publicly discoverable donor card without exact address or phone PII.",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "displayName": { "type": "string" },
+        "bloodGroup": { "type": "string", "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] },
+        "district": { "type": "string" },
+        "city": { "type": "string" },
+        "approxLat": { "type": "number" },
+        "approxLng": { "type": "number" },
+        "availabilityStatus": { "type": "string", "enum": ["AVAILABLE_NOW", "AVAILABLE_LATER", "UNAVAILABLE"] },
+        "statusExpiresAt": { "type": "string", "format": "date-time" },
+        "lastDonationDate": { "type": "string" },
+        "readinessConfirmed": { "type": "boolean" },
+        "trustLevel": { "type": "string", "enum": ["UNVERIFIED", "IDENTITY_VERIFIED", "HOSPITAL_CONFIRMED", "HOSPITAL_AUTHORIZED"] },
+        "qrToken": { "type": "string" },
+        "contactPreference": { "type": "string", "enum": ["IN_APP_CONSENT", "EMERGENCY_ONLY"] },
+        "donationCount": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["userId", "displayName", "bloodGroup", "district", "city", "approxLat", "approxLng", "availabilityStatus", "readinessConfirmed", "trustLevel", "qrToken", "contactPreference", "donationCount", "active", "createdAt", "updatedAt"]
+    },
+    "BloodRequest": {
+      "title": "BloodRequest",
+      "description": "Emergency blood request tracked across Rescue Chain and Trust Gate.",
+      "type": "object",
+      "properties": {
+        "requesterId": { "type": "string" },
+        "requesterName": { "type": "string" },
+        "bloodGroup": { "type": "string", "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] },
+        "unitsNeeded": { "type": "integer" },
+        "hospitalName": { "type": "string" },
+        "district": { "type": "string" },
+        "city": { "type": "string" },
+        "approxLat": { "type": "number" },
+        "approxLng": { "type": "number" },
+        "requiredBy": { "type": "string" },
+        "priority": { "type": "string", "enum": ["CRITICAL", "HIGH", "STANDARD"] },
+        "description": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "ESCALATED", "FULFILLED", "CANCELLED"] },
+        "rescueStage": { "type": "string", "enum": ["NEARBY_BATCH", "EXPANDED_DISTRICT", "ESCALATED"] },
+        "trustLevel": { "type": "string", "enum": ["UNVERIFIED", "IDENTITY_VERIFIED", "HOSPITAL_CONFIRMED", "HOSPITAL_AUTHORIZED"] },
+        "duplicateFingerprint": { "type": "string" },
+        "responseCount": { "type": "integer" },
+        "flaggedSuspicious": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["requesterId", "requesterName", "bloodGroup", "unitsNeeded", "hospitalName", "district", "city", "approxLat", "approxLng", "requiredBy", "priority", "description", "status", "rescueStage", "trustLevel", "duplicateFingerprint", "responseCount", "flaggedSuspicious", "createdAt", "updatedAt"]
+    },
+    "DonorResponse": {
+      "title": "DonorResponse",
+      "description": "Consent-gated Safe Contact interaction between requester and donor.",
+      "type": "object",
+      "properties": {
+        "requestId": { "type": "string" },
+        "requesterId": { "type": "string" },
+        "donorId": { "type": "string" },
+        "donorDisplayName": { "type": "string" },
+        "donorBloodGroup": { "type": "string" },
+        "requesterName": { "type": "string" },
+        "status": { "type": "string", "enum": ["CONTACT_REQUESTED", "DONOR_INTERESTED", "CONSENT_GRANTED", "DECLINED", "COMPLETED"] },
+        "donorConsented": { "type": "boolean" },
+        "sharedContactNote": { "type": "string" },
+        "message": { "type": "string" },
+        "participantUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["requestId", "requesterId", "donorId", "donorDisplayName", "donorBloodGroup", "requesterName", "status", "donorConsented", "message", "participantUids", "createdAt", "updatedAt"]
+    },
+    "Organization": {
+      "title": "Organization",
+      "description": "Verified hospital or blood bank center.",
+      "type": "object",
+      "properties": {
+        "ownerUid": { "type": "string" },
+        "name": { "type": "string" },
+        "orgType": { "type": "string", "enum": ["HOSPITAL", "BLOOD_BANK"] },
+        "district": { "type": "string" },
+        "city": { "type": "string" },
+        "addressLine": { "type": "string" },
+        "approxLat": { "type": "number" },
+        "approxLng": { "type": "number" },
+        "trustLevel": { "type": "string", "enum": ["UNVERIFIED", "IDENTITY_VERIFIED", "HOSPITAL_CONFIRMED", "HOSPITAL_AUTHORIZED"] },
+        "enquiryCount": { "type": "integer" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ownerUid", "name", "orgType", "district", "city", "addressLine", "approxLat", "approxLng", "trustLevel", "enquiryCount", "active", "createdAt", "updatedAt"]
+    },
+    "BloodInventoryItem": {
+      "title": "BloodInventoryItem",
+      "description": "Component-level blood stock entry with freshness timestamps.",
+      "type": "object",
+      "properties": {
+        "orgId": { "type": "string" },
+        "orgName": { "type": "string" },
+        "orgCollection": { "type": "string", "enum": ["hospitals", "bloodBanks"] },
+        "ownerUid": { "type": "string" },
+        "bloodGroup": { "type": "string", "enum": ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"] },
+        "componentType": { "type": "string", "enum": ["WHOLE_BLOOD", "PRBC", "PLATELETS", "PLASMA"] },
+        "unitsAvailable": { "type": "integer" },
+        "stockStatus": { "type": "string", "enum": ["ADEQUATE", "LOW", "CRITICAL", "OUT_OF_STOCK"] },
+        "expiryDateNote": { "type": "string" },
+        "district": { "type": "string" },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["orgId", "orgName", "orgCollection", "ownerUid", "bloodGroup", "componentType", "unitsAvailable", "stockStatus", "district", "active", "createdAt", "updatedAt"]
+    },
+    "NotificationItem": {
+      "title": "NotificationItem",
+      "description": "User-scoped Rescue Chain or Safe Contact alert.",
+      "type": "object",
+      "properties": {
+        "recipientUid": { "type": "string" },
+        "requestId": { "type": "string" },
+        "title": { "type": "string" },
+        "body": { "type": "string" },
+        "category": { "type": "string", "enum": ["RESCUE_CHAIN", "SAFE_CONTACT", "SYSTEM"] },
+        "readFlag": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["recipientUid", "title", "body", "category", "readFlag", "createdAt"]
+    },
+    "DonationRecord": {
+      "title": "DonationRecord",
+      "description": "Donor voluntary donation timeline record.",
+      "type": "object",
+      "properties": {
+        "donorUid": { "type": "string" },
+        "facilityName": { "type": "string" },
+        "district": { "type": "string" },
+        "bloodGroup": { "type": "string" },
+        "donatedOn": { "type": "string" },
+        "notes": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorUid", "facilityName", "district", "bloodGroup", "donatedOn", "createdAt"]
+    },
+    "CertificateRecord": {
+      "title": "CertificateRecord",
+      "description": "Voluntary donation appreciation certificate metadata.",
+      "type": "object",
+      "properties": {
+        "donorUid": { "type": "string" },
+        "title": { "type": "string" },
+        "issuedBy": { "type": "string" },
+        "issuedOn": { "type": "string" },
+        "certificateCode": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["donorUid", "title", "issuedBy", "issuedOn", "certificateCode", "createdAt"]
+    },
+    "AbuseReport": {
+      "title": "AbuseReport",
+      "description": "Suspicious activity or abuse report for Trust Gate moderation.",
+      "type": "object",
+      "properties": {
+        "reporterUid": { "type": "string" },
+        "targetId": { "type": "string" },
+        "targetType": { "type": "string", "enum": ["REQUEST", "DONOR", "ORGANIZATION"] },
+        "reason": { "type": "string" },
+        "status": { "type": "string", "enum": ["OPEN", "REVIEWED", "DISMISSED"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["reporterUid", "targetId", "targetType", "reason", "status", "createdAt", "updatedAt"]
+    },
+    "AdminLog": {
+      "title": "AdminLog",
+      "description": "Immutable Trust Gate moderation audit trail.",
+      "type": "object",
+      "properties": {
+        "adminUid": { "type": "string" },
+        "action": { "type": "string" },
+        "targetId": { "type": "string" },
+        "note": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["adminUid", "action", "targetId", "note", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": { "schema": { "$ref": "#/entities/UserProfile" }, "description": "User profiles" },
+    "/donors/{donorId}": { "schema": { "$ref": "#/entities/DonorProfile" }, "description": "Public donor discovery cards" },
+    "/bloodRequests/{requestId}": { "schema": { "$ref": "#/entities/BloodRequest" }, "description": "Emergency blood requests" },
+    "/donorResponses/{responseId}": { "schema": { "$ref": "#/entities/DonorResponse" }, "description": "Safe Contact & donor responses" },
+    "/hospitals/{orgId}": { "schema": { "$ref": "#/entities/Organization" }, "description": "Registered hospitals" },
+    "/bloodBanks/{orgId}": { "schema": { "$ref": "#/entities/Organization" }, "description": "Registered blood banks" },
+    "/bloodInventory/{inventoryId}": { "schema": { "$ref": "#/entities/BloodInventoryItem" }, "description": "Blood bank and hospital inventory freshness" },
+    "/notifications/{notifId}": { "schema": { "$ref": "#/entities/NotificationItem" }, "description": "User-scoped alerts" },
+    "/donationHistory/{recordId}": { "schema": { "$ref": "#/entities/DonationRecord" }, "description": "Donor donation history" },
+    "/certificates/{certId}": { "schema": { "$ref": "#/entities/CertificateRecord" }, "description": "Donor appreciation certificates" },
+    "/reports/{reportId}": { "schema": { "$ref": "#/entities/AbuseReport" }, "description": "Abuse and suspicious activity reports" },
+    "/adminLogs/{logId}": { "schema": { "$ref": "#/entities/AdminLog" }, "description": "Admin Trust Gate audit logs" }
+  }
+}
